@@ -1,10 +1,10 @@
 use anchor_lang::prelude::*;
-
+use solana_program::entrypoint_deprecated::ProgramResult;
 declare_id!("G4qPXXjL3U2gYmAwEwzTkX1oKjwhPC14RuxZvjfSAPCU");
 
 #[program]
 pub mod crowdfunding {
-    use solana_program::entrypoint_deprecated::ProgramResult;
+    
 
     use super::*;
 
