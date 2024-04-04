@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 const App: React.FC = () => {
   const [phantomPresent, setPhantomPresent] = useState<boolean>(false);
   const [walletBallance, setWalletBalance] = useState<number>(0);
+  const [walletAddress, setWalletAddress] = useState<string>('');
 
   useEffect(() => {
     // Function to check if Phantom is installed
@@ -39,17 +40,17 @@ const App: React.FC = () => {
 
         // Get the user's public key
         const { solana } = window as any;
-        //const response = await solana.connect({ onlyIfTrusted: false });
-        //const publicKey = new PublicKey(response.publicKey.toString());
-
+        const response = await solana.connect({ onlyIfTrusted: false });
+        const publicKey = new PublicKey(response.publicKey.toString());
+        setWalletAddress(publicKey.toString())
         // Fetch and set the balance
-        //const balance = await connection.getBalance(publicKey);
-        //setWalletBalance(balance / 10 ** 9); // Convert the balance from lamports to SOL
+        const balance = await connection.getBalance(publicKey);
+        setWalletBalance(balance / 10 ** 9); // Convert the balance from lamports to SOL
       }
     };
 
     getBalance();
-  }, [phantomPresent]);
+  }, [phantomPresent, walletAddress]);
 
   return (
     <div>
@@ -57,6 +58,7 @@ const App: React.FC = () => {
         <div>
           <p>Phantom wallet is installed.</p>
           <p>Balance: {walletBallance.toFixed(2)} SOL</p> {/* Display the balance here */}
+          <p>Address: {walletAddress}</p>
         </div>
       ) : (
         <p>Phantom wallet is not installed.</p>
