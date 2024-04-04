@@ -1,31 +1,39 @@
-import React, { useEffect } from 'react';
-import './App.css';
-import { Connection, clusterApiUrl } from '@solana/web3.js';
+import React, { useState, useEffect } from 'react';
 
 const App: React.FC = () => {
+  const [phantomPresent, setPhantomPresent] = useState<boolean>(false);
+
   useEffect(() => {
-    checkIfWalletIsConnected();
+    // Function to check if Phantom is installed
+    const checkIfPhantomIsInstalled = () => {
+      const { solana } = window as any;
+
+      if (solana && solana.isPhantom) {
+        setPhantomPresent(true);
+      } else {
+        setPhantomPresent(false);
+      }
+    };
+
+    checkIfPhantomIsInstalled();
+
+    // Optional: Listen for the Phantom extension to be installed while the page is open
+    window.addEventListener('solana#initialized', checkIfPhantomIsInstalled, {
+      once: true,
+    });
+
+    return () => {
+      window.removeEventListener('solana#initialized', checkIfPhantomIsInstalled);
+    };
   }, []);
 
-  const checkIfWalletIsConnected = async () => {
-    try {
-      // Initialize connection
-      const connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
-      
-      // Example usage: Fetch recent blockhash
-      const { blockhash } = await connection.getRecentBlockhash();
-      console.log('Recent blockhash:', blockhash);
-    } catch (error) {
-      console.error('Error checking wallet connection:', error);
-    }
-  };
-
   return (
-    <div className="App">
-      {
-        <p>hello</p>
-
-      }
+    <div>
+      {phantomPresent ? (
+        <p>Phantom wallet is installed.</p>
+      ) : (
+        <p>Phantom wallet is not installed.</p>
+      )}
     </div>
   );
 };
